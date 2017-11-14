@@ -8,4 +8,10 @@ class Product
     name = row.getString("Name");
     price = row.getFloat("Price");
   }//end Product
+  
+   String toString()
+  {
+    return name 
+      + " " + price;
+  }
 }//end class Product

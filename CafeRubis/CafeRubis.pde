@@ -6,6 +6,7 @@ void setup()
 {
   size(800, 600);
   loadData();
+  printProducts();
 }//end setup
 
 ArrayList<Product> products = new ArrayList<Product>(); 
@@ -20,6 +21,12 @@ void loadData()
     products.add(prod);
   }//end for
 }//end loadData
+
+void printProducts()
+{
+  for(Product row : products)
+    println(row);
+}
 
 void draw()
 {
