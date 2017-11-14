@@ -70,21 +70,25 @@ void displayBill()
   float borderX = width * 0.05;
   int y = 10;
   float mappedDistanceY = map(y, 0, height, borderY, height - borderY);
+  textAlign(CENTER, CENTER);
+  textSize(20);
+  fill(0);
+  text("Your Bill", width - (width / 4), height - height / 1.2);
+  
+  textAlign(LEFT, CENTER);
+  textSize(15);
   for(Product row : bill)
   {
-    textAlign(LEFT, CENTER);
-    textSize(15);
-    
     //Write products
     fill(0);
-    text(row.name, borderX * 1.5, mappedDistanceY + (mappedDistanceY / 10));
+    text(row.name, width - (borderX * 1.5), mappedDistanceY + (mappedDistanceY / 10));
     
     //Write Prices
-    text(row.roundedPrice, borderX * 6, mappedDistanceY + (mappedDistanceY / 10));
+    text(row.roundedPrice, width - (borderX * 6), mappedDistanceY + (mappedDistanceY / 10));
     y += height / table.getRowCount();
   }//end for
 }//end displayBill
-
+float total = 0;
 void mousePressed()
 {
   float borderY = height * 0.1;
@@ -93,12 +97,13 @@ void mousePressed()
   
   for (int i = 10; i < table.getRowCount(); i+= height / table.getRowCount())
   {
-    if (mouseX > borderX && mouseX < borderX + 250 && mouseY > i && mouseY < i + 60)
+    if (mouseX > borderX && mouseX < borderX + 250 && mouseY > i + borderY && mouseY < borderY + i + 60)
     {
       if(count == 0)
       {
         //Product products = products.get(count);
          bill.get(count);
+         //total += bill.price;
       }//end if
     }//end if
     count++;
