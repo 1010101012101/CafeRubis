@@ -1,5 +1,6 @@
 /*Lab Test one - OOP
-Date: 14/11/2017*/
+Name: Michael Lenghel
+Student Number: C16434974*/
 
 void setup()
 {
@@ -7,9 +8,17 @@ void setup()
   loadData();
 }//end setup
 
+ArrayList<Product> products = new ArrayList<Product>(); 
+ArrayList<Product> bill = new ArrayList<Product>(); 
+
 void loadData()
 {
-  
+  Table table = loadTable("cafe.csv", "header");
+  for (TableRow row:table.rows())
+  {
+    Product prod = new Product(row);
+    products.add(prod);
+  }//end for
 }//end loadData
 
 void draw()
