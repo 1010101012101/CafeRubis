@@ -12,6 +12,9 @@ void setup()
 ArrayList<Product> products = new ArrayList<Product>(); 
 ArrayList<Product> bill = new ArrayList<Product>(); 
 Table table; 
+float total = 0;
+boolean billFull = false;
+
 void loadData()
 {
   table = loadTable("cafe.csv", "header");
@@ -30,10 +33,12 @@ void printProducts()
 
 void displayProducts()
 {
-  int y = 10;
-  float borderY = height * 0.1;
-  float borderX = width * 0.05;
-  float mappedDistanceY = map(y, 0, height, borderY, height - borderY);
+  float borderY = height / 15;
+  float borderX = width / 15;
+  float y = borderY;
+  //float split = height / products.size();
+  float split = map(y, 0, height, borderY, height - borderY);
+  
   textAlign(CENTER, CENTER);
   textSize(25);
   fill(0);
@@ -41,73 +46,99 @@ void displayProducts()
   textAlign(LEFT, CENTER);
   textSize(15);
   
-  for(Product row : products)
-  {
-    mappedDistanceY = map(y, 0, height, borderY, height - borderY);
-    //Draw squares
-    fill(255);
-    rect(borderX,mappedDistanceY, 250, 60);
-    
-    //Write products
-    fill(0);
-    text(row.name, borderX * 1.5, mappedDistanceY + (mappedDistanceY / 10));
-    
-    //Write Prices
-    text(row.roundedPrice, borderX * 6, mappedDistanceY + (mappedDistanceY / 10));
-    y += height / table.getRowCount();
-  }//end for
-  
   //Draw line between
   line (width / 2, borderY, width / 2, height - borderY);
   fill(255);
   //rectMode(CENTER);
-  rect(width / 2 + 10, (height / 10), width - width /1.8, borderY *  table.getRowCount() + (table.getRowCount() * 8) );
+  rect(width / 2 + (borderX / 2), borderY, width - width /1.8, height / 1.2);
+
+  for(int i = 0; i < products.size(); i++)
+  {
+    Product drinks = products.get(i);
+    
+    //Draw squares
+    fill(255);
+    rect(borderX, borderY + (split * i), width / 3, height / 10);
+    
+    //Write products
+    fill(0);
+    text(drinks.name, borderX + (borderX / 4), borderY + (height / 20) + split * i);
+    
+    //Write Prices
+    text(drinks.roundedPrice, borderX * 5,  borderY + (height / 20) + split * i);
+  }//end for
+   
 }//end displayProducts
 
 void displayBill()
 {
-  float borderY = height * 0.1;
-  float borderX = width * 0.05;
+  float borderY = height / 15;
+  float borderX = width / 15;
+  float boxBorder = height - height / 1.1;
   int y = 10;
   float mappedDistanceY = map(y, 0, height, borderY, height - borderY);
+  int i;
   textAlign(CENTER, CENTER);
   textSize(20);
   fill(0);
-  text("Your Bill", width - (width / 4), height - height / 1.2);
+  text("Your Bill", width - (width / 4), boxBorder);
   
-  textAlign(LEFT, CENTER);
+  //textAlign(LEFT, CENTER);
   textSize(15);
-  for(Product row : bill)
+  
+  for(i = 0; i < bill.size(); i++)
   {
+    Product bills = bill.get(i);
+    
     //Write products
     fill(0);
-    text(row.name, width - (borderX * 1.5), mappedDistanceY + (mappedDistanceY / 10));
+    text(bills.name, width - (borderX * 1.8), mappedDistanceY * i + (mappedDistanceY / 10) + boxBorder * 2);
     
     //Write Prices
-    text(row.roundedPrice, width - (borderX * 6), mappedDistanceY + (mappedDistanceY / 10));
-    y += height / table.getRowCount();
+    text(bills.roundedPrice, width - (borderX * 6), mappedDistanceY * i + (mappedDistanceY / 10) + boxBorder * 2);
   }//end for
+  //print total
+    String roundedTotal = nf(total, 1, 2);
+    text("Total: " + roundedTotal, width - (borderX * 1.2), mappedDistanceY * i + (mappedDistanceY / 10) + boxBorder * 2 + mappedDistanceY);
 }//end displayBill
-float total = 0;
+
 void mousePressed()
 {
-  float borderY = height * 0.1;
-  float borderX = width * 0.05;
-  int count = 0;
-  
-  for (int i = 10; i < table.getRowCount(); i+= height / table.getRowCount())
-  {
-    if (mouseX > borderX && mouseX < borderX + 250 && mouseY > i + borderY && mouseY < borderY + i + 60)
+  float borderY = height / 15;
+  float borderX = width / 15;
+  float y = borderY;
+  float mappedDistanceY = map(y, 0, height, borderY, height - borderY);
+
+    //Makes sure within boxses
+    if (mouseX > borderX && mouseX < borderX + width / 3)
     {
-      if(count == 0)
+      for(int i = 0; i < products.size(); i++)
       {
-        //Product products = products.get(count);
-         bill.get(count);
-         //total += bill.price;
-      }//end if
+        Product drinks = products.get(i);
+        
+        if(mouseY > borderY + (mappedDistanceY * i) && mouseY < borderY + (mappedDistanceY * i) +  (height / 10))
+        {
+          if(billFull)
+          {
+            //Don't add any more since will go off bill
+            break;
+          }//end if
+          
+          else
+          {
+            bill.add(drinks);
+            total += drinks.price;
+            
+            //Can't fit any more than this on the screen
+            if(bill.size() == 7)
+            {
+              billFull = true;
+            }//end if
+            break;
+          }//end else
+        }//end if
+      }//end for
     }//end if
-    count++;
-  }//end for
 }//end mousePressed
 
 void draw()
